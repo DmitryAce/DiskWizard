@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "580713359496",
+    "project_id": "diskwizard-64fb5",
+    "storage_bucket": "diskwizard-64fb5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:580713359496:android:9a830d970683e9b237d73d",
+        "android_client_info": {
+          "package_name": "com.example.diskwizard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeBAj0fPCTYLZgVDDAuIxK3-axfPTD4x4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
