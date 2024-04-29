@@ -18,12 +18,13 @@ import com.example.diskwizard.presentation.profile.ProfileFragment;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
+    String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String userName = getIntent().getStringExtra("UserName"); // Получим имя пользователя из Intent
+        userName = getIntent().getStringExtra("UserName"); // Получим имя пользователя из Intent
 
         NavigationBarView navBar = findViewById(R.id.bottomNavigationView);
         navBar.setOnItemSelectedListener(this);
@@ -36,8 +37,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         Fragment fragment = new Fragment();
 
         if (itemId == R.id.home) fragment = new HomeFragment();
-        else if (itemId == R.id.search) fragment = new DiskListFragment();
-        else if (itemId == R.id.profile) fragment = new ProfileFragment();
+        else if (itemId == R.id.search) fragment = new DiskListFragment(userName);
+        else if (itemId == R.id.profile) fragment = new ProfileFragment(userName);
         else if (itemId == R.id.info) fragment = new AboutFragment(this::onAppAboutClick, this::onDeveloperAboutClick);
 
         getSupportFragmentManager()

@@ -100,7 +100,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         user.setEmail(email.getText().toString());
                         user.setName(name.getText().toString());
                         user.setPass(pass.getText().toString());
-                        user.setAdmin(0);
+                        user.setAdmin(false);
 
                         users.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
