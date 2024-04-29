@@ -5,10 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-
+import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.diskwizard.domain.service.disk.LocalDiskService;
 
@@ -32,6 +33,8 @@ public class DiskListFragment extends Fragment {
         DiskAdapter diskAdapter = new DiskAdapter(view.getContext(), R.layout.fragment_disk_list_item, disks);
 
         listView.setAdapter(diskAdapter);
+
+        Fragment fragment = new Fragment();
 
         return view;
     }

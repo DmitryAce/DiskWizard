@@ -23,9 +23,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Имя пользователя для профиля
-        String userName = getIntent().getStringExtra("UserName");
+        String userName = getIntent().getStringExtra("UserName"); // Получим имя пользователя из Intent
 
         NavigationBarView navBar = findViewById(R.id.bottomNavigationView);
         navBar.setOnItemSelectedListener(this);

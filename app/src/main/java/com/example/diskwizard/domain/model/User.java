@@ -36,4 +36,12 @@ public class User {
     public void setPass(String pass) {
         this.pass = pass;
     }
+
+    public int getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(int admin) {
+        this.admin = admin;
+    }
 }

@@ -1,21 +1,13 @@
 package com.example.diskwizard.presentation.registration;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.diskwizard.MainActivity;
-import com.example.diskwizard.R;
 import com.example.diskwizard.domain.model.User;
 import com.example.diskwizard.presentation.login.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,23 +19,17 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.diskwizard.databinding.ActivityRegistrationBinding;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 
 public class RegistrationActivity extends AppCompatActivity {
     ActivityRegistrationBinding binding;
-    private FirebaseAuth auth;
-    private TextInputEditText emailField;
-    private TextInputEditText nameField;
-    private TextInputEditText passwordField;
-    private TextInputEditText repeatpasswordField;
+    FirebaseAuth auth;
+    TextInputEditText emailField;
+    TextInputEditText nameField;
+    TextInputEditText passwordField;
+    TextInputEditText repeatpasswordField;
     FirebaseDatabase db = FirebaseDatabase.getInstance();
 
     DatabaseReference users;
@@ -109,10 +95,12 @@ public class RegistrationActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
+
                         User user = new User();
                         user.setEmail(email.getText().toString());
                         user.setName(name.getText().toString());
                         user.setPass(pass.getText().toString());
+                        user.setAdmin(0);
 
                         users.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -128,17 +116,18 @@ public class RegistrationActivity extends AppCompatActivity {
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Snackbar.make(binding.textView4, "Успешная регистрация!", Snackbar.LENGTH_SHORT).show();
+                                                        }
                                                     }
                                                 });
                                     }
                                 });
 
-                        Snackbar.make(binding.textView4, "Успешная регистрация!", Snackbar.LENGTH_SHORT).show();
                         Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
                         startActivity(intent);
                         finish();
                     }
-
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
