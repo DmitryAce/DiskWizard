@@ -21,6 +21,10 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import com.example.diskwizard.presentation.disk.list.DiskListFragment;
 import com.example.diskwizard.presentation.profile.ProfileFragment;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
@@ -34,13 +38,19 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         View view = binding.getRoot();
         super.onCreate(savedInstanceState);
         setContentView(view);
-        userName = getIntent().getStringExtra("UserName"); // Получим имя пользователя из Intent
-
 
         NavigationBarView navBar = findViewById(R.id.bottomNavigationView);
         navBar.setOnItemSelectedListener(this);
         navBar.setSelectedItemId(R.id.home);
 
+    }
+
+    @Override
+    protected void onResume() {
+        // Получение имени
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        userName = user.getDisplayName();
+        super.onResume();
     }
 
     @Override
@@ -55,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
             fragment = new DiskListFragment(userName);
         }
         else if (itemId == R.id.profile) {
-            fragment = new ProfileFragment(userName);
+            fragment = new ProfileFragment();
         }
         else if (itemId == R.id.info) {
             fragment = new AboutFragment(this::onAppAboutClick, this::onDeveloperAboutClick);

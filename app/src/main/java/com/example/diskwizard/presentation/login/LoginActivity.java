@@ -74,11 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(AuthResult authResult) {
                         // Получение имени пользователя после успешной авторизации
-                        FirebaseUser user = authResult.getUser();
-                        String userName = user.getDisplayName();
-
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("UserName", userName); // Добавим имя пользователя в Intent
                         startActivity(intent);
                         finish();
                     }
