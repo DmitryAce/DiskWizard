@@ -1,16 +1,22 @@
 package com.example.diskwizard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.diskwizard.databinding.ActivityMainBinding;
+import com.example.diskwizard.databinding.FragmentProfileBinding;
 import com.example.diskwizard.presentation.about.AboutFragment;
 import com.example.diskwizard.presentation.about.app.AppAboutFragment;
 import com.example.diskwizard.presentation.about.developer.DeveloperAboutFragment;
 import com.example.diskwizard.presentation.home.HomeFragment;
+import com.example.diskwizard.presentation.login.LoginActivity;
+import com.example.diskwizard.presentation.registration.RegistrationActivity;
 import com.google.android.material.navigation.NavigationBarView;
 
 import com.example.diskwizard.presentation.disk.list.DiskListFragment;
@@ -20,15 +26,21 @@ import com.example.diskwizard.presentation.profile.ProfileFragment;
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
     String userName;
 
+    public ActivityMainBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(view);
         userName = getIntent().getStringExtra("UserName"); // Получим имя пользователя из Intent
+
 
         NavigationBarView navBar = findViewById(R.id.bottomNavigationView);
         navBar.setOnItemSelectedListener(this);
         navBar.setSelectedItemId(R.id.home);
+
     }
 
     @Override
@@ -36,10 +48,18 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         int itemId = item.getItemId();
         Fragment fragment = new Fragment();
 
-        if (itemId == R.id.home) fragment = new HomeFragment();
-        else if (itemId == R.id.search) fragment = new DiskListFragment(userName);
-        else if (itemId == R.id.profile) fragment = new ProfileFragment(userName);
-        else if (itemId == R.id.info) fragment = new AboutFragment(this::onAppAboutClick, this::onDeveloperAboutClick);
+        if (itemId == R.id.home) {
+            fragment = new HomeFragment();
+        }
+        else if (itemId == R.id.search) {
+            fragment = new DiskListFragment(userName);
+        }
+        else if (itemId == R.id.profile) {
+            fragment = new ProfileFragment(userName);
+        }
+        else if (itemId == R.id.info) {
+            fragment = new AboutFragment(this::onAppAboutClick, this::onDeveloperAboutClick);
+        }
 
         getSupportFragmentManager()
                 .beginTransaction()

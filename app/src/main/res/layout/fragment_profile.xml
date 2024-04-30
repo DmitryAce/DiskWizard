@@ -27,16 +27,33 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView25"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Профиль"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/textView25"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Профиль"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/exit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="end|bottom"
+                    android:src="@drawable/exit" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -75,6 +92,7 @@
                     android:layout_gravity="end|bottom"
                     android:layout_marginEnd="100dp"
                     android:src="@drawable/changeavatar" />
+
             </RelativeLayout>
 
             <TextView
@@ -107,6 +125,7 @@
                 android:paddingTop="4dp">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/cur_pass"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Текущий пароль" />
@@ -118,6 +137,7 @@
                 android:paddingTop="4dp">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/new_pass"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Новый пароль" />
@@ -129,17 +149,19 @@
                 android:paddingTop="4dp">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/rep_pass"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Повторите пароль" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/change_pass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Изменить" />
+                android:text="Изменить"
+                android:background="@drawable/button"/>
 
             <TextView
                 android:id="@+id/textView29"
@@ -180,7 +202,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Изменить" />
+                android:text="Изменить"
+                android:background="@drawable/button"/>
 
             <TextView
                 android:id="@+id/textView30"
@@ -210,7 +233,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Изменить" />
+                android:text="Изменить"
+                android:background="@drawable/button"/>
 
         </LinearLayout>
 

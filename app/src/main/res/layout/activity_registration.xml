@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.registration.RegistrationActivity">
+    tools:context=".presentation.registration.RegistrationActivity"
+    android:background="@drawable/background">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
@@ -116,7 +117,8 @@
         android:onClick="onLoginClick"
         app:layout_constraintEnd_toEndOf="@+id/textInputLayout4"
         app:layout_constraintStart_toStartOf="@+id/textInputLayout4"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout4" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout4"
+        android:background="@drawable/button"/>
 
     <TextView
         android:id="@+id/textView4"

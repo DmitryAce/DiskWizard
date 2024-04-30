@@ -17,7 +17,8 @@
         android:onClick="onAppAboutButtonClick"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/button"/>
 
     <Button
         android:id="@+id/developerAboutButton"
@@ -31,5 +32,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appAboutButton" />
+        app:layout_constraintTop_toBottomOf="@+id/appAboutButton"
+        android:background="@drawable/button"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

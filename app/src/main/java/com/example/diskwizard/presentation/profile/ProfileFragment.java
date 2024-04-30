@@ -17,13 +17,15 @@ import com.bumptech.glide.Glide;
 import com.example.diskwizard.MainActivity;
 import com.example.diskwizard.R;
 import com.example.diskwizard.databinding.FragmentProfileBinding;
+import com.example.diskwizard.presentation.login.LoginActivity;
+import com.example.diskwizard.presentation.registration.RegistrationActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class ProfileFragment extends Fragment {
 
-    FragmentProfileBinding binding;
+    public FragmentProfileBinding binding;
     private static final int REQUEST_CODE_IMAGE = 101;
     private StorageReference storageReference;
 
@@ -39,13 +41,27 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         storageReference = FirebaseStorage.getInstance().getReference();
+
+        // Настройка обработчика событий для кнопки exit
+        binding.exit.setOnClickListener(view1 -> exit());
+
+        // Аватарка
         binding.changeAVA.setOnClickListener(view1 -> chooseImage());
         StorageReference fileRef = storageReference.child("avatars/" + name + ".jpg");
-        binding.UserName.setText(name);
         loadNewImage(fileRef);
+
+        binding.UserName.setText(name);
         return view;
     }
 
+    public void exit(){
+        Intent intent = new Intent(requireActivity(), LoginActivity.class);
+        startActivity(intent);
+        requireActivity().finish();
+    }
+
+
+    // IMAGE
     private void chooseImage() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
@@ -83,5 +99,7 @@ public class ProfileFragment extends Fragment {
                     .into(binding.imageView);
         });
     }
+
+    // ACCOUNT SETTINGS
 
 }
