@@ -28,7 +28,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|bottom"
                 android:src="@drawable/round_add_24"
-                android:layout_margin="16dp" />
+                android:layout_margin="16dp"
+                android:visibility="gone"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"

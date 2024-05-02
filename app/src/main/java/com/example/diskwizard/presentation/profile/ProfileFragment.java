@@ -48,6 +48,7 @@ public class ProfileFragment extends Fragment {
     private StorageReference storageReference;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     String name = user.getDisplayName();
+    private FirebaseAuth mAuth;
 
     public void setName(String name) {
         this.name = name;
@@ -55,6 +56,8 @@ public class ProfileFragment extends Fragment {
     public String getName() {
         return this.name;
     }
+
+    private DatabaseReference usersRef;
 
     @Nullable
     @Override
@@ -76,6 +79,28 @@ public class ProfileFragment extends Fragment {
         //Изменения аккаунта
         binding.changePass.setOnClickListener(view1 -> changeAccPass());
         binding.changeName.setOnClickListener(view1 -> changeAccName());
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        //Изменение статуса админа
+        if (currentUser != null && currentUser.getDisplayName() != null && currentUser.getDisplayName().equals("DmitryAce")) {
+            binding.textView31.setVisibility(View.VISIBLE);
+            binding.adminNameBlock.setVisibility(View.VISIBLE);
+            binding.changeAdmin.setVisibility(View.VISIBLE);
+            binding.textView30.setVisibility(View.GONE);
+            binding.newName.setVisibility(View.GONE);
+            binding.changeName.setVisibility(View.GONE);
+        } else {
+            binding.textView31.setVisibility(View.GONE);
+            binding.adminNameBlock.setVisibility(View.GONE);
+            binding.changeAdmin.setVisibility(View.GONE);
+            binding.textView30.setVisibility(View.VISIBLE);
+            binding.newName.setVisibility(View.VISIBLE);
+            binding.changeName.setVisibility(View.VISIBLE);
+        }
+
+        binding.changeAdmin.setOnClickListener(view1 -> changeAdminState());
 
         return view;
     }
@@ -257,7 +282,6 @@ public class ProfileFragment extends Fragment {
                 });
     }
 
-
     public void changeAccName() {
         final EditText newName = binding.newName;
 
@@ -307,5 +331,37 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    // Change AdminState
+    public void changeAdminState() {
+        final EditText nameEditText = binding.adminName;
+        final String adminName = nameEditText.getText().toString().trim();
 
+        if (TextUtils.isEmpty(adminName)) {
+            Snackbar.make(binding.textView30, "Введите имя", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String name = snapshot.child("name").getValue(String.class);
+                    if (name != null && name.equals(nameEditText.getText().toString())) {
+                        boolean adminStatus = snapshot.child("admin").getValue(Boolean.class);
+                        snapshot.getRef().child("admin").setValue(!adminStatus);
+                        Snackbar.make(binding.textView30, "Статус изменен", Snackbar.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                Snackbar.make(binding.textView30, "Пользователь не найден", Snackbar.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Обработка ошибок
+            }
+        });
+    }
 }

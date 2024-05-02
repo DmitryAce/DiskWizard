@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="32dp">
+        tools:layout_editor_absoluteY="32dp"
+        android:background="@drawable/background">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,7 +33,7 @@
                 android:layout_height="160dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="36dp"
-                tools:src="@drawable/diskhard" />
+                android:src="@drawable/diskhard" />
 
             <TextView
                 android:id="@+id/textView32"

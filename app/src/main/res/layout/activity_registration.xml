@@ -114,7 +114,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
         android:text="Зарегистрироваться"
-        android:onClick="onLoginClick"
+        android:onClick="onRegistrationClick"
         app:layout_constraintEnd_toEndOf="@+id/textInputLayout4"
         app:layout_constraintStart_toStartOf="@+id/textInputLayout4"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout4"

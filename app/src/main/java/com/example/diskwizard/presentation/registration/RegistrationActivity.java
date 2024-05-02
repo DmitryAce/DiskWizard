@@ -45,21 +45,12 @@ public class RegistrationActivity extends AppCompatActivity {
         db = FirebaseDatabase.getInstance();
         users = db.getReference("Users");
 
-        binding.regButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onRegistrationClick();
-            }
+        binding.regButton.setOnClickListener(view1 -> onRegistrationClick());
 
-        });
-
-        binding.textView4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        binding.textView4.setOnClickListener(view12 -> {
+            Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 

@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
     public ActivityMainBinding binding;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -46,14 +47,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     }
 
     @Override
-    protected void onResume() {
-        // Получение имени
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        userName = user.getDisplayName();
-        super.onResume();
-    }
-
-    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         Fragment fragment = new Fragment();
@@ -62,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
             fragment = new HomeFragment();
         }
         else if (itemId == R.id.search) {
-            fragment = new DiskListFragment(userName);
+            fragment = new DiskListFragment();
         }
         else if (itemId == R.id.profile) {
             fragment = new ProfileFragment();
