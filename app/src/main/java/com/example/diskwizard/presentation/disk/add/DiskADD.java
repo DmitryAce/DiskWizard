@@ -101,9 +101,6 @@ public class DiskADD extends AppCompatActivity {
 
             // Сохранить изображение в Storage
             uploadImage(localImgURI, id);
-
-            // Уведомление об успешном добавлении
-            exit();
         }
     }
 
@@ -181,10 +178,12 @@ public class DiskADD extends AppCompatActivity {
         fileRef.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     Toast.makeText(this, "Image uploaded", Toast.LENGTH_SHORT).show();
+                    exit();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show();
                 });
     }
+
 
 }

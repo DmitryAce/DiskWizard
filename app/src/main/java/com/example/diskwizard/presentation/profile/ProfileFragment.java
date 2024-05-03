@@ -13,6 +13,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -305,7 +306,6 @@ public class ProfileFragment extends Fragment {
                                     }
                                     Snackbar.make(binding.textView30, "Имя пользователя успешно изменено", Snackbar.LENGTH_SHORT).show();
                                     binding.UserName.setText(newName.getText().toString());
-
                                     setName(newName.getText().toString());
                                 }
 
@@ -343,6 +343,12 @@ public class ProfileFragment extends Fragment {
                     if (name != null && name.equals(nameEditText.getText().toString())) {
                         boolean adminStatus = snapshot.child("admin").getValue(Boolean.class);
                         snapshot.getRef().child("admin").setValue(!adminStatus);
+
+                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MySharedPref", getActivity().MODE_PRIVATE);
+                        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                        myEdit.putBoolean("isAdmin", !adminStatus);
+
+                        myEdit.apply();
                         Snackbar.make(binding.textView30, "Статус изменен", Snackbar.LENGTH_SHORT).show();
                         return;
                     }

@@ -6,4 +6,7 @@
     <color name="default_color">#6750A4</color>
     <color name="del_color">#D12121</color>
     <color name="pressed_color">#673AB7</color>
+
+    <!-- ORANGE -->
+    <color name="textOrange">#FF5722</color>
 </resources>

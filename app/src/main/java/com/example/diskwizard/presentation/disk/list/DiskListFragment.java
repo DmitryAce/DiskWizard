@@ -9,7 +9,7 @@ import android.widget.ListView;
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
+import android.content.SharedPreferences;
 import com.example.diskwizard.databinding.FragmentDiskListBinding;
 import com.example.diskwizard.domain.service.disk.FirebaseDiskService;
 
@@ -47,24 +47,15 @@ public class DiskListFragment extends Fragment {
         buttonAdd = binding.addAdminButton;
 
         buttonAdd.setOnClickListener(view1 -> goToDiskAdding());
-        usersRef.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    boolean isAdmin = dataSnapshot.child("admin").getValue(Boolean.class);
-                    if (isAdmin) {
-                        buttonAdd.setVisibility(View.VISIBLE);
-                    } else {
-                        buttonAdd.setVisibility(View.GONE);
-                    }
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Обработка ошибок
-            }
-        });
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MySharedPref", getActivity().MODE_PRIVATE);
+        boolean isAdmin = sharedPreferences.getBoolean("isAdmin", false);
+
+        if (isAdmin) {
+            buttonAdd.setVisibility(View.VISIBLE);
+        } else {
+            buttonAdd.setVisibility(View.GONE);
+        }
 
         // Извлекаем данные о дисках из базы данных и заполняем список
         DatabaseReference disksRef = FirebaseDatabase.getInstance().getReference().child("Disks");
