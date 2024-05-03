@@ -2,12 +2,23 @@ package com.example.diskwizard.presentation.profile;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +28,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.diskwizard.MainActivity;
 import com.example.diskwizard.R;
 import com.example.diskwizard.databinding.FragmentProfileBinding;
@@ -41,8 +53,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProfileFragment extends Fragment {
 
+    private static final int REQUEST_CODE = 72;
+    private static final int REQUEST_CODE_CAMERA = 73;
     public FragmentProfileBinding binding;
     private static final int REQUEST_CODE_IMAGE = 101;
     private StorageReference storageReference;
@@ -113,20 +131,42 @@ public class ProfileFragment extends Fragment {
 
     // IMAGE
     private void chooseImage() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent, REQUEST_CODE_IMAGE);
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        Intent chooser = Intent.createChooser(galleryIntent, "Выберите приложение");
+        chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { cameraIntent });
+
+        startActivityForResult(chooser, REQUEST_CODE_IMAGE);
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE_IMAGE && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == REQUEST_CODE_IMAGE && resultCode == Activity.RESULT_OK) {
             Uri imageUri = data.getData();
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            uploadImage(imageUri, userId);
+            if (imageUri != null) {
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                uploadImage(imageUri, userId);
+            } else {
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                // Convert bitmap to Uri
+                imageUri = getImageUri(getContext(), imageBitmap);
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                uploadImage(imageUri, userId);
+            }
         }
+    }
+
+    private Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 
     private void uploadImage(Uri imageUri, String userId) {
@@ -147,56 +187,8 @@ public class ProfileFragment extends Fragment {
         fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
             Glide.with(this)
                     .load(uri)
+                    .apply(new RequestOptions().centerCrop())
                     .into(binding.imageView);
-        });
-    }
-
-    // Img COPY\DELET
-
-    public void copyAndDeleteImage(String oldName, String newName) {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference avatarsRef = storage.getReference().child("avatars");
-
-        StorageReference oldImageRef = avatarsRef.child(oldName);
-
-        oldImageRef.getMetadata().addOnSuccessListener(storageMetadata -> {
-            String mimeType = storageMetadata.getContentType();
-            String ext = "";
-
-            switch (mimeType) {
-                case "image/jpeg":
-                    ext = "jpeg";
-                    break;
-                case "image/png":
-                    ext = "png";
-                    break;
-                case "image/jpg":
-                    ext = "jpg";
-                    break;
-                // Добавьте здесь другие типы MIME, если это необходимо
-            }
-
-            if (!ext.isEmpty()) {
-                StorageReference newImageRef = avatarsRef.child(newName + "." + ext);
-
-                oldImageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
-                    newImageRef.putBytes(bytes).addOnSuccessListener(taskSnapshot -> {
-                        // Image copied successfully
-                        // Now delete the old image
-                        oldImageRef.delete().addOnSuccessListener(aVoid -> {
-                            // Old image deleted successfully
-                        }).addOnFailureListener(e -> {
-                            // Handle any errors
-                        });
-                    }).addOnFailureListener(e -> {
-                        // Handle any errors
-                    });
-                }).addOnFailureListener(e -> {
-                    // Handle any errors
-                });
-            }
-        }).addOnFailureListener(e -> {
-            // Handle any errors
         });
     }
 

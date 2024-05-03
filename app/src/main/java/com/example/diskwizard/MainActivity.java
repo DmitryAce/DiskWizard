@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,9 +43,21 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
         NavigationBarView navBar = findViewById(R.id.bottomNavigationView);
         navBar.setOnItemSelectedListener(this);
-        navBar.setSelectedItemId(R.id.home);
 
+
+        String fragmentToLoad = getIntent().getStringExtra("fragmentToLoad");
+        if (fragmentToLoad != null && fragmentToLoad.equals("search")) {
+            navBar.setSelectedItemId(R.id.search);
+        } else {
+            navBar.setSelectedItemId(R.id.home);
+        }
+
+        String message = getIntent().getStringExtra("toast");
+        if (message != null && message.equals("Диск успешно добавлен")) {
+            Toast.makeText(this, "Диск успешно добавлен", Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -66,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
         getSupportFragmentManager()
                 .beginTransaction()
+                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out) // Добавляем анимацию
                 .replace(R.id.fragmentView, fragment)
                 .setReorderingAllowed(true)
                 .addToBackStack("backstack")
@@ -73,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
         return true;
     }
+
 
     private void onAppAboutClick() {
         getSupportFragmentManager()

@@ -62,7 +62,5 @@
             android:headerDividersEnabled="false" />
 
 
-
-
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

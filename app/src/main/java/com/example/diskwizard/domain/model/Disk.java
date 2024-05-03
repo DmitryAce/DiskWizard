@@ -2,11 +2,21 @@ package com.example.diskwizard.domain.model;
 
 public class Disk {
 
-    private final String name;
-    private final String description;
-    private final String details;
+    String id;
+    private String name;
+    private String description;
+    private String details;
+
+    public Disk() {}
 
     public Disk(String name, String description, String details) {
+        this.name = name;
+        this.description = description;
+        this.details = details;
+    }
+
+    public Disk(String id, String name, String description, String details) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.details = details;
@@ -21,7 +31,16 @@ public class Disk {
     }
 
     public String getDetails() {
-        return details;
+        return this.details;
     }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 
 }
