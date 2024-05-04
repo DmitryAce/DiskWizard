@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -133,36 +135,39 @@ public class DiskADD extends AppCompatActivity {
 
     // Обработка изображения
 
+    // Создайте экземпляр ActivityResultLauncher
+    ActivityResultLauncher<Intent> mGetContent = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    localImgURI  = data.getData();
+                    if (localImgURI == null) {
+                        Bundle extras = data.getExtras();
+                        Bitmap imageBitmap = (Bitmap) extras.get("data");
+                        // Convert bitmap to Uri
+                        localImgURI = getImageUri(this, imageBitmap);
+                    }
+                    diskEmpty = false;
+                    Glide.with(this)
+                            .load(localImgURI)
+                            .apply(new RequestOptions().centerCrop())
+                            .into(binding.imageView);
+                }
+            }
+    );
+
     private void chooseImage() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         Intent chooser = Intent.createChooser(galleryIntent, "Выберите приложение");
         chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { cameraIntent });
 
-        startActivityForResult(chooser, REQUEST_CODE_IMAGE);
+        // Запустите ActivityResultLauncher
+        mGetContent.launch(chooser);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_IMAGE && resultCode == Activity.RESULT_OK) {
-            localImgURI  = data.getData();
-            if (localImgURI == null) {
-                Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                // Convert bitmap to Uri
-                localImgURI = getImageUri(this, imageBitmap);
-            }
-            diskEmpty = false;
-            Glide.with(this)
-                    .load(localImgURI)
-                    .apply(new RequestOptions().centerCrop())
-                    .into(binding.imageView);
-        }
-    }
 
     private Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();

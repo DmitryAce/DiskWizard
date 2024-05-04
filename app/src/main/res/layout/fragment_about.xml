@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="presentation.about.AboutFragment"
-    android:background="@drawable/background">
+    tools:context="presentation.about.AboutFragment">
 
     <Button
         android:id="@+id/appAboutButton"
@@ -39,6 +38,7 @@
     <TextView
         android:id="@+id/textView33"
         android:layout_width="match_parent"
+        android:layout_marginStart="12dp"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
         android:text="Новости: Носители информации"

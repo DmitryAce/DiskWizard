@@ -69,7 +69,7 @@ public class DiskListFragment extends Fragment {
                         disks.add(disk);
                     }
                 }
-                DiskAdapter diskAdapter = new DiskAdapter(requireContext(), R.layout.fragment_disk_list_item, disks);
+                DiskAdapter diskAdapter = new DiskAdapter(requireActivity(), R.layout.fragment_disk_list_item, disks);
                 listView.setAdapter(diskAdapter);
             }
 

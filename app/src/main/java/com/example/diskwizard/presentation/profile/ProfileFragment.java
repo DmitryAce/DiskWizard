@@ -1,5 +1,7 @@
 package com.example.diskwizard.presentation.profile;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -29,6 +31,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.diskwizard.MainActivity;
 import com.example.diskwizard.R;
@@ -131,36 +134,37 @@ public class ProfileFragment extends Fragment {
     }
 
     // IMAGE
+    // Создадим экземпляр ActivityResultLauncher
+    ActivityResultLauncher<Intent> mGetContent = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    Uri imageUri = data.getData();
+                    if (imageUri != null) {
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        uploadImage(imageUri, userId);
+                    } else {
+                        Bundle extras = data.getExtras();
+                        Bitmap imageBitmap = (Bitmap) extras.get("data");
+                        // Convert bitmap to Uri
+                        imageUri = getImageUri(getContext(), imageBitmap);
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        uploadImage(imageUri, userId);
+                    }
+                }
+            }
+    );
+
     private void chooseImage() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         Intent chooser = Intent.createChooser(galleryIntent, "Выберите приложение");
         chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { cameraIntent });
 
-        startActivityForResult(chooser, REQUEST_CODE_IMAGE);
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_IMAGE && resultCode == Activity.RESULT_OK) {
-            Uri imageUri = data.getData();
-            if (imageUri != null) {
-                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                uploadImage(imageUri, userId);
-            } else {
-                Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                // Convert bitmap to Uri
-                imageUri = getImageUri(getContext(), imageBitmap);
-                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                uploadImage(imageUri, userId);
-            }
-        }
+        // Запустим ActivityResultLauncher
+        mGetContent.launch(chooser);
     }
 
     private Uri getImageUri(Context inContext, Bitmap inImage) {
@@ -188,6 +192,7 @@ public class ProfileFragment extends Fragment {
         fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
             Glide.with(this)
                     .load(uri)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
                     .apply(new RequestOptions().centerCrop())
                     .into(binding.imageView);
         });
