@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity"
-    android:background="@drawable/background">
+    android:background="@drawable/background"
+    android:id="@+id/mainbackground">
 
     <FrameLayout
         android:id="@+id/fragmentView"
@@ -29,7 +30,11 @@
         app:itemTextColor="@color/white"
         app:itemIconTint="@color/white"
         android:background="@android:color/transparent"
-        app:menu="@menu/bottom_nav_menu" />
+        app:itemRippleColor="@android:color/transparent"
+        app:itemBackground="@android:color/transparent"
+        app:menu="@menu/bottom_nav_menu"
+        style="@style/Widget.MaterialComponents.BottomNavigationView.PrimarySurface"/>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

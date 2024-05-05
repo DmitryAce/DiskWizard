@@ -6,7 +6,38 @@
     <color name="default_color">#6750A4</color>
     <color name="del_color">#D12121</color>
     <color name="pressed_color">#673AB7</color>
+    <color name="itemcolor">#673AB7</color>
+
 
     <!-- ORANGE -->
     <color name="textOrange">#FF5722</color>
+
+    <!-- GREEN -->
+    <color name="green_primary">#4CAF50</color>
+    <color name="green_primary_dark">#215A23</color>
+    <color name="green_accent">#8BC34A</color>
+    <color name="green_vivid">#A5FA42</color>
+    <color name="green_text">#FFFFFF</color>
+
+    <!-- DEEP PURPLE -->
+    <color name="deep_purple_primary">#673AB7</color>
+    <color name="deep_purple_primary_dark">#320B86</color>
+    <color name="deep_purple_accent">#9575CD</color>
+    <color name="deep_purple_vivid">#AA00FF</color>
+    <color name="deep_purple_text">#FFFFFF</color>
+
+    <!-- LIGHTBLUE -->
+    <color name="lightblue_primary">#03A9F4</color>
+    <color name="lightblue_primary_dark">#01579B</color>
+    <color name="lightblue_accent">#40C4FF</color>
+    <color name="lightblue_vivid">#80D8FF</color>
+    <color name="lightblue_text">#FFFFFF</color>
+
+    <!-- ORANGE -->
+    <color name="orange_primary">#FF9800</color>
+    <color name="orange_primary_dark">#E65100</color>
+    <color name="orange_accent">#FFAB40</color>
+    <color name="orange_vivid">#FFD180</color>
+    <color name="orange_text">#FFFFFF</color>
+
 </resources>

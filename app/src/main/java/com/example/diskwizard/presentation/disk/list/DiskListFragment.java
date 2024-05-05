@@ -2,6 +2,8 @@ package com.example.diskwizard.presentation.disk.list;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,8 +62,51 @@ public class DiskListFragment extends Fragment {
             buttonAdd.setVisibility(View.GONE);
         }
 
-        // Извлекаем данные о дисках из базы данных и заполняем список
         DatabaseReference disksRef = FirebaseDatabase.getInstance().getReference().child("Disks");
+
+        binding.searchtext.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Ничего не делать
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Ничего не делать
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String searchText = s.toString();
+                disksRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<Disk> disks = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Disk disk = snapshot.getValue(Disk.class);
+                            if (disk != null) {
+                                String diskName = disk.getName().replaceAll("\\s","").toLowerCase();
+                                String search = searchText.replaceAll("\\s","").toLowerCase();
+                                if (diskName.contains(search)) {
+                                    disks.add(disk);
+                                }
+                            }
+                        }
+                        DiskAdapter diskAdapter = new DiskAdapter(requireActivity(), R.layout.fragment_disk_list_item, disks);
+
+                        listView.setAdapter(diskAdapter);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Обработка ошибок
+                    }
+                });
+            }
+        });
+
+
+        // Извлекаем данные о дисках из базы данных и заполняем список
         disksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

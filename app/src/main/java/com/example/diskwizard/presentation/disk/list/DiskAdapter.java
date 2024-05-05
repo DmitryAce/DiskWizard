@@ -115,8 +115,6 @@ public class DiskAdapter extends ArrayAdapter<Disk> {
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.translate);
         view.startAnimation(animation);
 
-
-
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("MySharedPref",getContext().MODE_PRIVATE);
         boolean isAdmin = sharedPreferences.getBoolean("isAdmin", false);
 
@@ -126,44 +124,33 @@ public class DiskAdapter extends ArrayAdapter<Disk> {
             delbut.setVisibility(View.GONE);
         }
 
-        delbut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        delbut.setOnClickListener(v -> new AlertDialog.Builder(getContext())
+                .setTitle("Удалить элемент")
+                .setMessage("Вы действительно хотите удалить диск, " + disk.getName() + "?")
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Получаем ID диска, который нужно удалить
+                    String diskId = disk.getId();
 
-                new AlertDialog.Builder(getContext())
-                        .setTitle("Удалить элемент")
-                        .setMessage("Вы действительно хотите удалить диск, " + disk.getName() + "?")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Получаем ID диска, который нужно удалить
-                                String diskId = disk.getId();
+                    // Удаляем диск из Firebase
+                    DatabaseReference diskRef = FirebaseDatabase.getInstance().getReference().child("Disks").child(diskId);
+                    StorageReference StorageRef = FirebaseStorage.getInstance().getReference().child("Disks").child(diskId+".jpg");
+                    diskRef.removeValue();
+                    StorageRef.delete();
 
-                                // Удаляем диск из Firebase
-                                DatabaseReference diskRef = FirebaseDatabase.getInstance().getReference().child("Disks").child(diskId);
-                                StorageReference StorageRef = FirebaseStorage.getInstance().getReference().child("Disks").child(diskId+".jpg");
-                                diskRef.removeValue();
-                                StorageRef.delete();
+                    // Удаляем диск из списка и обновляем адаптер
+                    disks.remove(position);
+                    notifyDataSetChanged();
+                })
+                .setNegativeButton("Отмена", null)
+                .show());
 
-                                // Удаляем диск из списка и обновляем адаптер
-                                disks.remove(position);
-                                notifyDataSetChanged();
-                            }
-                        })
-                        .setNegativeButton("Отмена", null)
-                        .show();
-            }
-        });
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), DiskDetails.class);
-                intent.putExtra("diskId", disk.getId());
-                intent.putExtra("diskName", disk.getName());
-                intent.putExtra("diskDescription", disk.getDescription());
-                getContext().startActivity(intent);
-                activity.finish();
-            }
+        view.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), DiskDetails.class);
+            intent.putExtra("diskId", disk.getId());
+            intent.putExtra("diskName", disk.getName());
+            intent.putExtra("diskDescription", disk.getDescription());
+            getContext().startActivity(intent);
+            activity.finish();
         });
 
 

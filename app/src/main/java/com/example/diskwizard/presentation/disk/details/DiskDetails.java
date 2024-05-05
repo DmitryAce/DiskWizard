@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -58,15 +60,59 @@ public class DiskDetails extends AppCompatActivity {
     DatabaseReference db;
     String diskId;
     private StorageReference storageReference;
+    View backGroundView;
 
     DatabaseReference disksRef = FirebaseDatabase.getInstance().getReference().child("Disks");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
+        String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard"); // Значение по умолчанию - ваша текущая тема
+
+        // Устанавливаем тему
+        switch (themeName) {
+            case "Base.Theme.DiskWizard.Green":
+                setTheme(R.style.Base_Theme_DiskWizard_Green);
+                break;
+            case "Base.Theme.DiskWizard.DeepPurple":
+                setTheme(R.style.Base_Theme_DiskWizard_DeepPurple);
+                break;
+            case "Base.Theme.DiskWizard.LightBlue":
+                setTheme(R.style.Base_Theme_DiskWizard_LightBlue);
+                break;
+            case "Base.Theme.DiskWizard.Orange":
+                setTheme(R.style.Base_Theme_DiskWizard_Orange);
+                break;
+            default:
+                setTheme(R.style.Base_Theme_DiskWizard);
+                break;
+        }
+
         super.onCreate(savedInstanceState);
+
         binding = ActivityDiskDetailsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+        backGroundView = binding.mainbackground;
+
+        // Устанавливаем тему
+        switch (themeName) {
+            case "Base.Theme.DiskWizard.Green":
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeepgreen);
+                break;
+            case "Base.Theme.DiskWizard.DeepPurple":
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeeppurple);
+                break;
+            case "Base.Theme.DiskWizard.LightBlue":
+                backGroundView.setBackgroundResource(R.drawable.backgroundskies);
+                break;
+            case "Base.Theme.DiskWizard.Orange":
+                backGroundView.setBackgroundResource(R.drawable.backgroundorange);
+                break;
+            default:
+                backGroundView.setBackgroundResource(R.drawable.background);
+                break;
+        }
 
         Intent intent = getIntent();
         diskId = intent.getStringExtra("diskId");
@@ -134,13 +180,11 @@ public class DiskDetails extends AppCompatActivity {
                         storageReference = FirebaseStorage.getInstance().getReference();
                         StorageReference fileRef = storageReference.child(comment.getUserId()+ "/pfp.jpg");
 
-                        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            Glide.with(DiskDetails.this)
-                                    .load(uri)
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
-                                    .apply(new RequestOptions().centerCrop())
-                                    .into(avaView);
-                        });
+                        fileRef.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(DiskDetails.this)
+                                .load(uri)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
+                                .apply(new RequestOptions().centerCrop())
+                                .into(avaView));
 
                         SharedPreferences sharedPreferences = DiskDetails.this.getSharedPreferences("MySharedPref",DiskDetails.this.MODE_PRIVATE);
                         boolean isAdmin = sharedPreferences.getBoolean("isAdmin", false);
@@ -154,32 +198,24 @@ public class DiskDetails extends AppCompatActivity {
                             delbut.setVisibility(View.GONE);
                         }
 
-                        delbut.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+                        delbut.setOnClickListener(v -> new AlertDialog.Builder(DiskDetails.this)
+                                .setTitle("Удалить элемент")
+                                .setMessage("Вы действительно хотите удалить отзыв пользователя  " + comment.getAuthor() + "?")
+                                .setPositiveButton("Ok", (dialog, which) -> {
+                                    // Получаем ID диска, который нужно удалить
+                                    String commentId = comment.getId();
 
-                                new AlertDialog.Builder(DiskDetails.this)
-                                        .setTitle("Удалить элемент")
-                                        .setMessage("Вы действительно хотите удалить отзыв пользователя  " + comment.getAuthor() + "?")
-                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                // Получаем ID диска, который нужно удалить
-                                                String commentId = comment.getId();
+                                    // Удаляем диск из Firebase
+                                    DatabaseReference diskRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(commentId);
+                                    diskRef.removeValue();
 
-                                                // Удаляем диск из Firebase
-                                                DatabaseReference diskRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(commentId);
-                                                diskRef.removeValue();
-
-                                                // Удаляем диск из списка и обновляем адаптер
-                                                int position = comments.indexOf(comment);
-                                                comments.remove(position);
-                                                commentList.removeViewAt(position);
-                                            }
-                                        })
-                                        .setNegativeButton("Отмена", null)
-                                        .show();
-                            }
-                        });
+                                    // Удаляем диск из списка и обновляем адаптер
+                                    int position = comments.indexOf(comment);
+                                    comments.remove(position);
+                                    commentList.removeViewAt(position);
+                                })
+                                .setNegativeButton("Отмена", null)
+                                .show());
 
                         commentList.addView(commentView);
                     }
@@ -233,13 +269,11 @@ public class DiskDetails extends AppCompatActivity {
             dateView.setText(comment.getDate());
             storageReference = FirebaseStorage.getInstance().getReference();
             StorageReference fileRef = storageReference.child(comment.getUserId()+ "/pfp.jpg");
-            fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                Glide.with(DiskDetails.this)
-                        .load(uri)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
-                        .apply(new RequestOptions().centerCrop())
-                        .into(avaView);
-            });
+            fileRef.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(DiskDetails.this)
+                    .load(uri)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
+                    .apply(new RequestOptions().centerCrop())
+                    .into(avaView));
 
             LinearLayout commentList = findViewById(R.id.commentList);
             commentList.addView(commentView);
@@ -260,12 +294,10 @@ public class DiskDetails extends AppCompatActivity {
     }
 
     private void loadImage(StorageReference fileRef) {
-        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            Glide.with(this)
-                    .load(uri)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
-                    .apply(new RequestOptions().centerCrop())
-                    .into(binding.imageView);
-        });
+        fileRef.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(this)
+                .load(uri)
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
+                .apply(new RequestOptions().centerCrop())
+                .into(binding.imageView));
     }
 }

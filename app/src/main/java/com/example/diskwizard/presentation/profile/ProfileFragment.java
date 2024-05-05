@@ -4,13 +4,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -124,7 +124,124 @@ public class ProfileFragment extends Fragment {
 
         binding.changeAdmin.setOnClickListener(view1 -> changeAdminState());
 
+        changeThemeHendler();
         return view;
+    }
+
+    private void changeThemeHendler() {
+        Glide.with(this)
+                .load(R.drawable.background)
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
+                .apply(new RequestOptions().centerCrop())
+                .into(binding.CardimageView1);
+
+        Glide.with(this)
+                .load(R.drawable.backgrounddeepgreen)
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
+                .apply(new RequestOptions().centerCrop())
+                .into(binding.CardimageView2);
+
+        Glide.with(this)
+                .load(R.drawable.backgrounddeeppurple)
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
+                .apply(new RequestOptions().centerCrop())
+                .into(binding.CardimageView3);
+
+        Glide.with(this)
+                .load(R.drawable.backgroundskies)
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
+                .apply(new RequestOptions().centerCrop())
+                .into(binding.CardimageView4);
+        Glide.with(this)
+                .load(R.drawable.backgroundorange)
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
+                .apply(new RequestOptions().centerCrop())
+                .into(binding.CardimageView5);
+
+        binding.themeCard1.setOnClickListener(v -> new AlertDialog.Builder(getContext())
+                .setTitle("Смена темы")
+                .setMessage("После смены темы приложение будет перезапущено.")
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Сохраняем выбранную тему в SharedPreferences
+                    SharedPreferences.Editor editor = getActivity().getSharedPreferences("APP_PREFERENCES", Context.MODE_PRIVATE).edit();
+                    editor.putString("THEME", "Base_Theme_DiskWizard");
+                    editor.apply();
+
+                    Toast.makeText(getContext(), "Тема изменена", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                })
+                .setNegativeButton("Отмена", null)
+                .show());
+
+        binding.themeCard2.setOnClickListener(v -> new AlertDialog.Builder(getContext())
+                .setTitle("Смена темы")
+                .setMessage("После смены темы приложение будет перезапущено.")
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Сохраняем выбранную тему в SharedPreferences
+                    SharedPreferences.Editor editor = getActivity().getSharedPreferences("APP_PREFERENCES", Context.MODE_PRIVATE).edit();
+                    editor.putString("THEME", "Base.Theme.DiskWizard.Green");
+                    editor.apply();
+
+                    Toast.makeText(getContext(), "Тема изменена", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                })
+                .setNegativeButton("Отмена", null)
+                .show());
+
+        binding.themeCard3.setOnClickListener(v -> new AlertDialog.Builder(getContext())
+                .setTitle("Смена темы")
+                .setMessage("После смены темы приложение будет перезапущено.")
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Сохраняем выбранную тему в SharedPreferences
+                    SharedPreferences.Editor editor = getActivity().getSharedPreferences("APP_PREFERENCES", Context.MODE_PRIVATE).edit();
+                    editor.putString("THEME", "Base.Theme.DiskWizard.DeepPurple");
+                    editor.apply();
+
+                    Toast.makeText(getContext(), "Тема изменена", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                })
+                .setNegativeButton("Отмена", null)
+                .show());
+
+        binding.themeCard4.setOnClickListener(v -> new AlertDialog.Builder(getContext())
+                .setTitle("Смена темы")
+                .setMessage("После смены темы приложение будет перезапущено.")
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Сохраняем выбранную тему в SharedPreferences
+                    SharedPreferences.Editor editor = getActivity().getSharedPreferences("APP_PREFERENCES", Context.MODE_PRIVATE).edit();
+                    editor.putString("THEME", "Base.Theme.DiskWizard.LightBlue");
+                    editor.apply();
+
+                    Toast.makeText(getContext(), "Тема изменена", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                })
+                .setNegativeButton("Отмена", null)
+                .show());
+
+        binding.themeCard5.setOnClickListener(v -> new AlertDialog.Builder(getContext())
+                .setTitle("Смена темы")
+                .setMessage("После смены темы приложение будет перезапущено.")
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Сохраняем выбранную тему в SharedPreferences
+                    SharedPreferences.Editor editor = getActivity().getSharedPreferences("APP_PREFERENCES", Context.MODE_PRIVATE).edit();
+                    editor.putString("THEME", "Base.Theme.DiskWizard.Orange");
+                    editor.apply();
+
+                    Toast.makeText(getContext(), "Тема изменена", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                })
+                .setNegativeButton("Отмена", null)
+                .show());
     }
 
     public void exit(){

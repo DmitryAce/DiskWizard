@@ -3,11 +3,13 @@ package com.example.diskwizard.presentation.disk.add;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -47,13 +49,57 @@ public class DiskADD extends AppCompatActivity {
     Uri localImgURI;
 
     boolean diskEmpty = true;
+    View backGroundView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
+        String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard"); // Значение по умолчанию - ваша текущая тема
+
+        // Устанавливаем тему
+        switch (themeName) {
+            case "Base.Theme.DiskWizard.Green":
+                setTheme(R.style.Base_Theme_DiskWizard_Green);
+                break;
+            case "Base.Theme.DiskWizard.DeepPurple":
+                setTheme(R.style.Base_Theme_DiskWizard_DeepPurple);
+                break;
+            case "Base.Theme.DiskWizard.LightBlue":
+                setTheme(R.style.Base_Theme_DiskWizard_LightBlue);
+                break;
+            case "Base.Theme.DiskWizard.Orange":
+                setTheme(R.style.Base_Theme_DiskWizard_Orange);
+                break;
+            default:
+                setTheme(R.style.Base_Theme_DiskWizard);
+                break;
+        }
+
         super.onCreate(savedInstanceState);
+        
         binding = ActivityDiskAddBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view); // Set the content view
+        backGroundView = binding.mainbackground;
+
+        // Устанавливаем фон
+        switch (themeName) {
+            case "Base.Theme.DiskWizard.Green":
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeepgreen);
+                break;
+            case "Base.Theme.DiskWizard.DeepPurple":
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeeppurple);
+                break;
+            case "Base.Theme.DiskWizard.LightBlue":
+                backGroundView.setBackgroundResource(R.drawable.backgroundskies);
+                break;
+            case "Base.Theme.DiskWizard.Orange":
+                backGroundView.setBackgroundResource(R.drawable.backgroundorange);
+                break;
+            default:
+                backGroundView.setBackgroundResource(R.drawable.background);
+                break;
+        }
 
         Button buttonBack = binding.backToListDisk;
         Button buttonAdd = binding.addDiskButton;
@@ -64,7 +110,6 @@ public class DiskADD extends AppCompatActivity {
         buttonBack.setOnClickListener(view1 -> goToDiskList());
         buttonAdd.setOnClickListener(view1 -> onAddDiskClick());
         RelativeLayout rellay = binding.relmain;
-
 
         rellay.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             Rect r = new Rect();

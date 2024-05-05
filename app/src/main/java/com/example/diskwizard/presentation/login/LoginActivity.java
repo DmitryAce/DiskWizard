@@ -34,33 +34,71 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText emailField;
     private TextInputEditText passwordField;
     DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+    View backGroundView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
+        String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard"); // Значение по умолчанию - ваша текущая тема
+
+        // Устанавливаем тему
+        switch (themeName) {
+            case "Base.Theme.DiskWizard.Green":
+                setTheme(R.style.Base_Theme_DiskWizard_Green);
+                break;
+            case "Base.Theme.DiskWizard.DeepPurple":
+                setTheme(R.style.Base_Theme_DiskWizard_DeepPurple);
+                break;
+            case "Base.Theme.DiskWizard.LightBlue":
+                setTheme(R.style.Base_Theme_DiskWizard_LightBlue);
+                break;
+            case "Base.Theme.DiskWizard.Orange":
+                setTheme(R.style.Base_Theme_DiskWizard_Orange);
+                break;
+            default:
+                setTheme(R.style.Base_Theme_DiskWizard);
+                break;
+        }
+
         super.onCreate(savedInstanceState);
+
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+        backGroundView = binding.mainbackground;
+
+        // Устанавливаем фон
+        switch (themeName) {
+            case "Base.Theme.DiskWizard.Green":
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeepgreen);
+                break;
+            case "Base.Theme.DiskWizard.DeepPurple":
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeeppurple);
+                break;
+            case "Base.Theme.DiskWizard.LightBlue":
+                backGroundView.setBackgroundResource(R.drawable.backgroundskies);
+                break;
+            case "Base.Theme.DiskWizard.Orange":
+                backGroundView.setBackgroundResource(R.drawable.backgroundorange);
+                break;
+            default:
+                backGroundView.setBackgroundResource(R.drawable.background);
+                break;
+        }
 
         auth = FirebaseAuth.getInstance();
         emailField = binding.emailField;
         passwordField = binding.passwordField;
 
-        binding.loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onLoginClick();
-            }
+        binding.loginButton.setOnClickListener(view12 -> onLoginClick());
+
+        binding.textView4.setOnClickListener(view1 -> {
+            Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
+            startActivity(intent);
+            finish();
         });
 
-        binding.textView4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+
     }
 
     private void onLoginClick() {
@@ -73,44 +111,36 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         auth.signInWithEmailAndPassword(email, pass)
-                .addOnSuccessListener(new OnSuccessListener <AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        usersRef.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.exists()) {
-                                    boolean isAdmin = dataSnapshot.child("admin").getValue(Boolean.class);
+                .addOnSuccessListener(authResult -> {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    usersRef.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                boolean isAdmin = dataSnapshot.child("admin").getValue(Boolean.class);
 
-                                    // Сохранение значения isAdmin в SharedPreferences
-                                    SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-                                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                                    myEdit.putBoolean("isAdmin", isAdmin);
-                                    myEdit.apply();
-                                }
+                                // Сохранение значения isAdmin в SharedPreferences
+                                SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                                myEdit.putBoolean("isAdmin", isAdmin);
+                                myEdit.apply();
                             }
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                // Обработка ошибок
-                            }
-                        });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            // Обработка ошибок
+                        }
+                    });
 
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 })
 
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure (@NonNull Exception e){
-                        Snackbar.make(binding.textView,
-                                "Authorisation Error: " + e.getMessage(),
-                                Snackbar.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnFailureListener(e -> Snackbar.make(binding.textView,
+                        "Authorisation Error: " + e.getMessage(),
+                        Snackbar.LENGTH_SHORT).show());
     }
 
 }

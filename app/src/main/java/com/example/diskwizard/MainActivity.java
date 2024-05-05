@@ -1,6 +1,8 @@
 package com.example.diskwizard;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,29 +34,62 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     String userName;
 
     public ActivityMainBinding binding;
+    View backGroundView;
 
+    SharedPreferences prefs;
+    String themeName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-        super.onCreate(savedInstanceState);
         setContentView(view);
+
+        prefs = getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
+        themeName = prefs.getString("THEME", "Base.Theme.DiskWizard");
 
         NavigationBarView navBar = findViewById(R.id.bottomNavigationView);
         navBar.setOnItemSelectedListener(this);
+        backGroundView = binding.mainbackground;
 
 
         String fragmentToLoad = getIntent().getStringExtra("fragmentToLoad");
         if (fragmentToLoad != null && fragmentToLoad.equals("search")) {
             navBar.setSelectedItemId(R.id.search);
+
         } else {
             navBar.setSelectedItemId(R.id.home);
         }
 
+
         String message = getIntent().getStringExtra("toast");
         if (message != null && message.equals("Диск успешно добавлен")) {
             Toast.makeText(this, "Диск успешно добавлен", Toast.LENGTH_SHORT).show();
+        }
+
+        // Устанавливаем тему
+        switch (themeName) {
+            case "Base.Theme.DiskWizard.Green":
+                setTheme(R.style.Base_Theme_DiskWizard_Green);
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeepgreen);
+                break;
+            case "Base.Theme.DiskWizard.DeepPurple":
+                setTheme(R.style.Base_Theme_DiskWizard_DeepPurple);
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeeppurple);
+                break;
+            case "Base.Theme.DiskWizard.LightBlue":
+                setTheme(R.style.Base_Theme_DiskWizard_LightBlue);
+                backGroundView.setBackgroundResource(R.drawable.backgroundskies);
+                break;
+            case "Base.Theme.DiskWizard.Orange":
+                setTheme(R.style.Base_Theme_DiskWizard_Orange);
+                backGroundView.setBackgroundResource(R.drawable.backgroundorange);
+                break;
+            default:
+                setTheme(R.style.Base_Theme_DiskWizard);
+                backGroundView.setBackgroundResource(R.drawable.background);
+                break;
         }
     }
 
@@ -85,6 +120,24 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
                 .addToBackStack("backstack")
                 .commit();
 
+        switch (themeName) {
+            case "Base.Theme.DiskWizard.Green":
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeepgreen);
+                break;
+            case "Base.Theme.DiskWizard.DeepPurple":
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeeppurple);
+                break;
+            case "Base.Theme.DiskWizard.LightBlue":
+                backGroundView.setBackgroundResource(R.drawable.backgroundskies);
+                break;
+            case "Base.Theme.DiskWizard.Orange":
+                backGroundView.setBackgroundResource(R.drawable.backgroundorange);
+                break;
+            default:
+                backGroundView.setBackgroundResource(R.drawable.background);
+                break;
+        }
+
         return true;
     }
 
@@ -95,6 +148,23 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
                 .replace(R.id.fragmentView, new AppAboutFragment())
                 .addToBackStack("backstack")
                 .commit();
+        switch (themeName) {
+            case "Base.Theme.DiskWizard.Green":
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeepgreen);
+                break;
+            case "Base.Theme.DiskWizard.DeepPurple":
+                backGroundView.setBackgroundResource(R.drawable.backgrounddeeppurple);
+                break;
+            case "Base.Theme.DiskWizard.LightBlue":
+                backGroundView.setBackgroundResource(R.drawable.backgroundskies);
+                break;
+            case "Base.Theme.DiskWizard.Orange":
+                backGroundView.setBackgroundResource(R.drawable.backgroundorange);
+                break;
+            default:
+                backGroundView.setBackgroundResource(R.drawable.background);
+                break;
+        }
     }
 
     private void onDeveloperAboutClick() {
@@ -103,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
                 .replace(R.id.fragmentView, new DeveloperAboutFragment())
                 .addToBackStack("backstack")
                 .commit();
+        backGroundView.setBackgroundResource(R.drawable.backgroundauthor);
     }
 
 }

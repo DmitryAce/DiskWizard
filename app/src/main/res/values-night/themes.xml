@@ -4,5 +4,85 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="rippleColor">@color/default_color</item>
     </style>
+
+    <style name="Base.Theme.DiskWizard.Green" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Переопределение цветовых атрибутов-->
+        <item name="colorPrimary">@color/green_accent</item> <!-- Рамка активного поля, цвет кнопки -->
+        <item name="rippleColor">@color/green_vivid</item>
+        <item name="colorOnPrimary">@color/green_text</item>  <!-- Текст в кнопке -->
+        <item name="colorPrimaryContainer">@color/green_primary_dark</item> <!-- FAB -->
+        <item name="colorOnPrimaryContainer">@color/green_accent</item><!-- FAB text color-->
+
+        <item name="colorOnSurface">@color/green_accent</item> <!-- Набираем текст -->
+        <item name="colorOnSurfaceVariant">@color/green_accent</item><!-- Поля-текст -->
+        <item name="colorOutline">@color/green_primary</item><!-- Поля-границы -->
+
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
+
+    </style>
+
+    <style name="Base.Theme.DiskWizard.DeepPurple" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Переопределение цветовых атрибутов-->
+        <item name="colorPrimary">@color/deep_purple_primary_dark</item> <!-- Рамка активного поля, цвет кнопки -->
+        <item name="rippleColor">@color/deep_purple_vivid</item>
+        <item name="colorOnPrimary">@color/deep_purple_text</item>  <!-- Текст в кнопке -->
+        <item name="colorPrimaryContainer">@color/deep_purple_primary_dark</item> <!-- FAB -->
+        <item name="colorOnPrimaryContainer">@color/deep_purple_accent</item><!-- FAB text color-->
+
+        <item name="colorOnSurface">@color/deep_purple_accent</item> <!-- Набираем текст -->
+        <item name="colorOnSurfaceVariant">@color/deep_purple_accent</item><!-- Поля-текст -->
+        <item name="colorOutline">@color/deep_purple_primary</item><!-- Поля-границы -->
+
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+    </style>
+
+    <style name="Base.Theme.DiskWizard.LightBlue" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Переопределение цветовых атрибутов-->
+        <item name="colorPrimary">@color/lightblue_accent</item> <!-- Рамка активного поля, цвет кнопки -->
+        <item name="rippleColor">@color/lightblue_vivid</item>
+        <item name="colorOnPrimary">@color/lightblue_text</item>  <!-- Текст в кнопке -->
+        <item name="colorPrimaryContainer">@color/lightblue_primary_dark</item> <!-- FAB -->
+        <item name="colorOnPrimaryContainer">@color/lightblue_accent</item><!-- FAB text color-->
+
+        <item name="colorOnSurface">@color/lightblue_accent</item> <!-- Набираем текст -->
+        <item name="colorOnSurfaceVariant">@color/lightblue_accent</item><!-- Поля-текст -->
+        <item name="colorOutline">@color/lightblue_primary</item><!-- Поля-границы -->
+
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+    </style>
+
+    <style name="Base.Theme.DiskWizard.Orange" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Переопределение цветовых атрибутов-->
+        <item name="colorPrimary">@color/orange_accent</item> <!-- Рамка активного поля, цвет кнопки -->
+        <item name="rippleColor">@color/orange_vivid</item>
+        <item name="colorOnPrimary">@color/orange_text</item>  <!-- Текст в кнопке -->
+        <item name="colorPrimaryContainer">@color/orange_primary_dark</item> <!-- FAB -->
+        <item name="colorOnPrimaryContainer">@color/orange_accent</item><!-- FAB text color-->
+
+        <item name="colorOnSurface">@color/orange_accent</item> <!-- Набираем текст -->
+        <item name="colorOnSurfaceVariant">@color/orange_accent</item><!-- Поля-текст -->
+        <item name="colorOutline">@color/orange_primary</item><!-- Поля-границы -->
+
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+    </style>
+
 </resources>
