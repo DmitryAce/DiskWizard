@@ -117,16 +117,13 @@
                 android:background="@drawable/button"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout"/>
 
-            <ListView
+            <LinearLayout
                 android:id="@+id/commentList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="12dp"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="12dp"
-                android:footerDividersEnabled="false"
-                android:headerDividersEnabled="false"
+                android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@+id/add_comment"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
