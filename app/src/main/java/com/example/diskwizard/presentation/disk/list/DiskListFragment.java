@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ListView;
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
@@ -70,6 +73,7 @@ public class DiskListFragment extends Fragment {
                     }
                 }
                 DiskAdapter diskAdapter = new DiskAdapter(requireActivity(), R.layout.fragment_disk_list_item, disks);
+
                 listView.setAdapter(diskAdapter);
             }
 
