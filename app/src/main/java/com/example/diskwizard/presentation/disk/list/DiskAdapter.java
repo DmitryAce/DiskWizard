@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.app.AlertDialog;
 import android.graphics.drawable.Drawable;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
@@ -55,18 +57,37 @@ public class DiskAdapter extends ArrayAdapter<Disk> {
         this.activity = activity;
     }
 
+    // Создаем класс ViewHolder
+    private class ViewHolder {
+        ImageView image;
+        Button delbut;
+        TextView title;
+        TextView description;
+    }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View view = inflater.inflate(this.layout, parent, false);
-        FragmentDiskListItemBinding binding = FragmentDiskListItemBinding.bind(view);
+        ViewHolder viewHolder;
+        FragmentDiskListItemBinding binding;
+
+        if (convertView == null) {
+            binding = FragmentDiskListItemBinding.inflate(inflater, parent, false);
+            convertView = binding.getRoot();
+            viewHolder = new ViewHolder();
+            viewHolder.image = binding.imageView;
+            viewHolder.delbut = binding.delelement;
+            viewHolder.title = binding.title;
+            viewHolder.description = binding.description;
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
 
         Disk disk = disks.get(position);
 
-        ImageView image = binding.imageView;
-        Button delbut = binding.delelement;
-        binding.title.setText(disk.getName());
-        binding.description.setText(disk.getDescription());
+        viewHolder.title.setText(disk.getName());
+        viewHolder.description.setText(disk.getDescription());
 
         StorageReference imageRef = diskService.getImage(disk.getId());
 
@@ -77,7 +98,7 @@ public class DiskAdapter extends ArrayAdapter<Disk> {
                     .load(file)
                     .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
                     .apply(new RequestOptions().centerCrop())
-                    .into(image);
+                    .into(viewHolder.image);
         } else {
             // Если файла нет, загружаем изображение из Firebase и сохраняем его
             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -90,7 +111,7 @@ public class DiskAdapter extends ArrayAdapter<Disk> {
                             .into(new CustomTarget<Drawable>() {
                                 @Override
                                 public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                    image.setImageDrawable(resource);
+                                    viewHolder.image.setImageDrawable(resource);
 
                                     // Сохраняем изображение локально
                                     try {
@@ -115,18 +136,18 @@ public class DiskAdapter extends ArrayAdapter<Disk> {
 
         // Применяем анимацию к convertView
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.translate);
-        view.startAnimation(animation);
+        convertView.startAnimation(animation);
 
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("MySharedPref",getContext().MODE_PRIVATE);
         boolean isAdmin = sharedPreferences.getBoolean("isAdmin", false);
 
         if (isAdmin) {
-            delbut.setVisibility(View.VISIBLE);
+            viewHolder.delbut.setVisibility(View.VISIBLE);
         } else {
-            delbut.setVisibility(View.GONE);
+            viewHolder.delbut.setVisibility(View.GONE);
         }
 
-        delbut.setOnClickListener(v -> new AlertDialog.Builder(getContext())
+        viewHolder.delbut.setOnClickListener(v -> new AlertDialog.Builder(getContext())
                 .setTitle("Удалить элемент")
                 .setMessage("Вы действительно хотите удалить диск, " + disk.getName() + "?")
                 .setPositiveButton("Ok", (dialog, which) -> {
@@ -146,7 +167,7 @@ public class DiskAdapter extends ArrayAdapter<Disk> {
                 .setNegativeButton("Отмена", null)
                 .show());
 
-        view.setOnClickListener(v -> {
+        convertView.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), DiskDetails.class);
             intent.putExtra("diskId", disk.getId());
             intent.putExtra("diskName", disk.getName());
@@ -155,9 +176,7 @@ public class DiskAdapter extends ArrayAdapter<Disk> {
             activity.finish();
         });
 
-
-
-        return view;
+        return convertView;
     }
 
 }
