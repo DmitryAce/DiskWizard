@@ -5,18 +5,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.diskwizard.MainActivity;
 import com.example.diskwizard.R;
 import com.example.diskwizard.presentation.registration.RegistrationActivity;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.diskwizard.databinding.ActivityLoginBinding;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,11 +21,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-
 public class LoginActivity extends AppCompatActivity {
     ActivityLoginBinding binding;
-    private FirebaseAuth auth;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private TextInputEditText emailField;
     private TextInputEditText passwordField;
     DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -39,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
-        String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard"); // Значение по умолчанию - ваша текущая тема
+        String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard");
 
         // Устанавливаем тему
         switch (themeName) {
@@ -86,7 +79,6 @@ public class LoginActivity extends AppCompatActivity {
                 break;
         }
 
-        auth = FirebaseAuth.getInstance();
         emailField = binding.emailField;
         passwordField = binding.passwordField;
 
@@ -112,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
 
         auth.signInWithEmailAndPassword(email, pass)
                 .addOnSuccessListener(authResult -> {
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    FirebaseUser user = auth.getCurrentUser();
                     usersRef.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

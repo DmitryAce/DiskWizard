@@ -1,37 +1,24 @@
 package com.example.diskwizard;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-
 import com.example.diskwizard.databinding.ActivityMainBinding;
-import com.example.diskwizard.databinding.FragmentProfileBinding;
 import com.example.diskwizard.presentation.about.AboutFragment;
 import com.example.diskwizard.presentation.about.app.AppAboutFragment;
 import com.example.diskwizard.presentation.about.developer.DeveloperAboutFragment;
 import com.example.diskwizard.presentation.home.HomeFragment;
-import com.example.diskwizard.presentation.login.LoginActivity;
-import com.example.diskwizard.presentation.registration.RegistrationActivity;
 import com.google.android.material.navigation.NavigationBarView;
-
 import com.example.diskwizard.presentation.disk.list.DiskListFragment;
 import com.example.diskwizard.presentation.profile.ProfileFragment;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
-    String userName;
 
     public ActivityMainBinding binding;
     View backGroundView;
@@ -49,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         prefs = getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
         themeName = prefs.getString("THEME", "Base.Theme.DiskWizard");
 
-        NavigationBarView navBar = findViewById(R.id.bottomNavigationView);
+        NavigationBarView navBar = binding.bottomNavigationView;
         navBar.setOnItemSelectedListener(this);
         backGroundView = binding.mainbackground;
 

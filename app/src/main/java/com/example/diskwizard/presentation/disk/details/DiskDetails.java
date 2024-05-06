@@ -1,39 +1,25 @@
 package com.example.diskwizard.presentation.disk.details;
 
-import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.diskwizard.MainActivity;
 import com.example.diskwizard.R;
 import com.example.diskwizard.databinding.ActivityDiskDetailsBinding;
-import com.example.diskwizard.databinding.ActivityLoginBinding;
+import com.example.diskwizard.databinding.FragmentCommentItemBinding;
 import com.example.diskwizard.domain.model.Comment;
-import com.example.diskwizard.domain.model.Disk;
-import com.example.diskwizard.presentation.disk.list.DiskAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,9 +29,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,18 +39,17 @@ import java.util.Objects;
 public class DiskDetails extends AppCompatActivity {
 
     ActivityDiskDetailsBinding binding;
-    StorageReference Storage;
-    DatabaseReference db;
+    DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
     String diskId;
-    private StorageReference storageReference;
     View backGroundView;
-
-    DatabaseReference disksRef = FirebaseDatabase.getInstance().getReference().child("Disks");
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    LinearLayout commentList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
-        String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard"); // Значение по умолчанию - ваша текущая тема
+        String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard");
 
         // Устанавливаем тему
         switch (themeName) {
@@ -94,6 +76,7 @@ public class DiskDetails extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
         backGroundView = binding.mainbackground;
+        commentList = binding.commentList;
 
         // Устанавливаем тему
         switch (themeName) {
@@ -118,26 +101,20 @@ public class DiskDetails extends AppCompatActivity {
         diskId = intent.getStringExtra("diskId");
         String diskName = intent.getStringExtra("diskName");
         String diskSmallDescription = intent.getStringExtra("diskDescription");
-        db = FirebaseDatabase.getInstance().getReference();
 
-        TextView smallDescTextView = binding.SmallDescriptionText;
-        TextView descTextView = binding.DescriptionText;
-        TextView nameTextView = binding.tv1;
-
-        smallDescTextView.setText(diskSmallDescription);
-        nameTextView.setText(diskName);
+        binding.SmallDescriptionText.setText(diskSmallDescription);
+        binding.tv1.setText(diskName);
         binding.addComment.setOnClickListener(view1 -> onAddCommentClick());
 
-        Storage = FirebaseStorage.getInstance().getReference();
-        StorageReference fileRef = Storage.child("Disks/"+diskId+".jpg");
+        StorageReference fileRef = storageReference.child("Disks/"+diskId+".jpg");
         loadImage(fileRef);
 
-        disksRef.child(diskId).addListenerForSingleValueEvent(new ValueEventListener() {
+        db.child("Disks").child(diskId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     String details = dataSnapshot.child("details").getValue(String.class);
-                    descTextView.setText(details);
+                    binding.DescriptionText.setText(details);
                 }
             }
 
@@ -148,11 +125,9 @@ public class DiskDetails extends AppCompatActivity {
         });
 
         // Извлекаем данные о комментариях из базы данных и заполняем список
-        DatabaseReference commentsRef = FirebaseDatabase.getInstance().getReference().child("Comments");
-        commentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        db.child("Comments").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("Comments", "commentsRef.addListenerForSingleValueEvent");
                 List<Comment> comments = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Comment comment = snapshot.getValue(Comment.class);
@@ -160,25 +135,22 @@ public class DiskDetails extends AppCompatActivity {
                         comments.add(comment);
                     }
                 }
-                Log.d("Comments", "прям перед вызовом адаптера");
 
                 try {
-                    LinearLayout commentList = findViewById(R.id.commentList);
                     for (Comment comment : comments) {
-                        View commentView = getLayoutInflater().inflate(R.layout.fragment_comment_item, null);
-                        // Заполните commentView данными из комментария
-                        TextView nametext = commentView.findViewById(R.id.nametext);
-                        TextView maintext = commentView.findViewById(R.id.maintext);
-                        ImageView avaView = commentView.findViewById(R.id.avaView);
-                        TextView date = commentView.findViewById(R.id.datetext);
-                        Button delbut = commentView.findViewById(R.id.delelement);
+                        FragmentCommentItemBinding commentBinding = FragmentCommentItemBinding.inflate(getLayoutInflater());
+
+                        TextView nametext = commentBinding.nametext;
+                        TextView maintext = commentBinding.maintext;
+                        ImageView avaView = commentBinding.avaView;
+                        TextView date = commentBinding.datetext;
+                        Button delbut = commentBinding.delelement;
 
                         nametext.setText(comment.getAuthor());
                         maintext.setText(comment.getMaintext());
                         date.setText(comment.getDate());
 
-                        storageReference = FirebaseStorage.getInstance().getReference();
-                        StorageReference fileRef = storageReference.child(comment.getUserId()+ "/pfp.jpg");
+                        StorageReference fileRef = storageReference.child(comment.getUserId() + "/pfp.jpg");
 
                         fileRef.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(DiskDetails.this)
                                 .load(uri)
@@ -186,11 +158,10 @@ public class DiskDetails extends AppCompatActivity {
                                 .apply(new RequestOptions().centerCrop())
                                 .into(avaView));
 
-                        SharedPreferences sharedPreferences = DiskDetails.this.getSharedPreferences("MySharedPref",DiskDetails.this.MODE_PRIVATE);
+                        SharedPreferences sharedPreferences = DiskDetails.this.getSharedPreferences("MySharedPref", DiskDetails.this.MODE_PRIVATE);
                         boolean isAdmin = sharedPreferences.getBoolean("isAdmin", false);
 
-                        FirebaseUser curUser = FirebaseAuth.getInstance().getCurrentUser();
-                        String curUserName = curUser.getDisplayName();
+                        String curUserName = user.getDisplayName();
 
                         if (isAdmin || Objects.equals(comment.getAuthor(), curUserName)) {
                             delbut.setVisibility(View.VISIBLE);
@@ -206,7 +177,7 @@ public class DiskDetails extends AppCompatActivity {
                                     String commentId = comment.getId();
 
                                     // Удаляем диск из Firebase
-                                    DatabaseReference diskRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(commentId);
+                                    DatabaseReference diskRef = db.child("Comments").child(commentId);
                                     diskRef.removeValue();
 
                                     // Удаляем диск из списка и обновляем адаптер
@@ -217,20 +188,15 @@ public class DiskDetails extends AppCompatActivity {
                                 .setNegativeButton("Отмена", null)
                                 .show());
 
-                        commentList.addView(commentView);
+                        binding.commentList.addView(commentBinding.getRoot());
                     }
                 } catch (Exception e) {
-                    // Обработка ошибки
-                    Log.e("Comments", "Error creating comments: " + e.getMessage());
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
-
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("Comments", "ERROR: "+error.toString()); // Выводим ошибку в логи
             }
         });
 
@@ -239,9 +205,8 @@ public class DiskDetails extends AppCompatActivity {
     }
 
     private void onAddCommentClick() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String Author = user.getDisplayName();
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String author = user.getDisplayName();
+        String userId = user.getUid();
         String maintext = binding.newCommentText.getText().toString();
         Date currentDate = new Date();
         String date = formatDate(currentDate);
@@ -254,32 +219,26 @@ public class DiskDetails extends AppCompatActivity {
             DatabaseReference commentsRef = db.child("Comments");
 
             String id = commentsRef.push().getKey(); // Генерация уникального ключа
-            Comment comment = new Comment(id, diskId, userId, Author, maintext, date);
+            Comment comment = new Comment(id, diskId, userId, author, maintext, date);
             commentsRef.child(id).setValue(comment);
 
             // Создаем новое представление для комментария и добавляем его в LinearLayout
-            View commentView = getLayoutInflater().inflate(R.layout.fragment_comment_item, null);
+            FragmentCommentItemBinding commentBinding = FragmentCommentItemBinding.inflate(getLayoutInflater());
+            commentBinding.nametext.setText(comment.getAuthor());
+            commentBinding.maintext.setText(comment.getMaintext());
+            commentBinding.datetext.setText(comment.getDate());
 
-            TextView nametextView = commentView.findViewById(R.id.nametext);
-            TextView maintextView = commentView.findViewById(R.id.maintext);
-            ImageView avaView = commentView.findViewById(R.id.avaView);
-            TextView dateView = commentView.findViewById(R.id.datetext);
-            nametextView.setText(comment.getAuthor());
-            maintextView.setText(comment.getMaintext());
-            dateView.setText(comment.getDate());
-            storageReference = FirebaseStorage.getInstance().getReference();
+            // Загрузка изображения
             StorageReference fileRef = storageReference.child(comment.getUserId()+ "/pfp.jpg");
             fileRef.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(DiskDetails.this)
                     .load(uri)
                     .diskCacheStrategy(DiskCacheStrategy.ALL) // Включаем кэширование
                     .apply(new RequestOptions().centerCrop())
-                    .into(avaView));
+                    .into(commentBinding.avaView));
 
-            LinearLayout commentList = findViewById(R.id.commentList);
-            commentList.addView(commentView);
+            commentList.addView(commentBinding.getRoot());
         }
     }
-
 
     public static String formatDate(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());

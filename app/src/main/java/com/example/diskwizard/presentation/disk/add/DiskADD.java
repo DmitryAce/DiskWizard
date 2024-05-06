@@ -9,41 +9,29 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.diskwizard.MainActivity;
 import com.example.diskwizard.R;
 import com.example.diskwizard.databinding.ActivityDiskAddBinding;
 import com.example.diskwizard.domain.model.Disk;
-import com.example.diskwizard.presentation.disk.list.DiskListFragment;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 
 public class DiskADD extends AppCompatActivity {
     ActivityDiskAddBinding binding;
-    private static final int REQUEST_CODE_IMAGE = 102;
     StorageReference Storage;
     DatabaseReference db;
     Uri localImgURI;
@@ -54,7 +42,7 @@ public class DiskADD extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
-        String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard"); // Значение по умолчанию - ваша текущая тема
+        String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard");
 
         // Устанавливаем тему
         switch (themeName) {

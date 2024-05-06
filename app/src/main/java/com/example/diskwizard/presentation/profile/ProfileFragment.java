@@ -4,44 +4,28 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ClipData;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.diskwizard.MainActivity;
 import com.example.diskwizard.R;
 import com.example.diskwizard.databinding.FragmentProfileBinding;
 import com.example.diskwizard.presentation.login.LoginActivity;
-import com.example.diskwizard.presentation.registration.RegistrationActivity;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -55,22 +39,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.UploadTask;
-
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
-    private static final int REQUEST_CODE = 72;
-    private static final int REQUEST_CODE_CAMERA = 73;
     public FragmentProfileBinding binding;
-    private static final int REQUEST_CODE_IMAGE = 101;
-    private StorageReference storageReference;
+    private StorageReference storageReference =  FirebaseStorage.getInstance().getReference();;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     String name = user.getDisplayName();
-    private FirebaseAuth mAuth;
 
     public void setName(String name) {
         this.name = name;
@@ -79,34 +55,24 @@ public class ProfileFragment extends Fragment {
         return this.name;
     }
 
-    private DatabaseReference usersRef;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-        storageReference = FirebaseStorage.getInstance().getReference();
         binding.UserName.setText(name);
-
-        // Настройка обработчика событий для кнопки exit
         binding.exit.setOnClickListener(view1 -> exit());
-
-        // Аватарка
         binding.changeAVA.setOnClickListener(view1 -> chooseImage());
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        String userId = user.getUid();
         StorageReference fileRef = storageReference.child(userId + "/pfp.jpg");
         loadNewImage(fileRef);
 
-        //Изменения аккаунта
         binding.changePass.setOnClickListener(view1 -> changeAccPass());
         binding.changeName.setOnClickListener(view1 -> changeAccName());
 
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
         //Изменение статуса админа
-        if (currentUser != null && currentUser.getDisplayName() != null && currentUser.getDisplayName().equals("DmitryAce")) {
+        if (user != null && name != null && name.equals("DmitryAce")) {
             binding.textView31.setVisibility(View.VISIBLE);
             binding.adminNameBlock.setVisibility(View.VISIBLE);
             binding.changeAdmin.setVisibility(View.VISIBLE);
@@ -349,16 +315,13 @@ public class ProfileFragment extends Fragment {
             return;
         }
 
-        // Получение текущего пользователя Firebase
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
         // Проверка правильности старого пароля
         AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), current_password.getText().toString());
         user.reauthenticate(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         // Пароль успешно подтвержден, теперь можно изменить пароль
-                        changeUserPassword(name, current_password.getText().toString(), new_password.getText().toString());
+                        changeUserPassword(name, new_password.getText().toString());
                     } else {
                         Snackbar.make(binding.textView30,
                                 "Текущий пароль неверный",
@@ -368,7 +331,7 @@ public class ProfileFragment extends Fragment {
     }
 
     // Метод для изменения пароля пользователя в Firebase
-    private void changeUserPassword(String name, String currentPassword, String newPassword) {
+    private void changeUserPassword(String name, String newPassword) {
         FirebaseAuth.getInstance().getCurrentUser().updatePassword(newPassword)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -404,9 +367,6 @@ public class ProfileFragment extends Fragment {
             Snackbar.make(binding.textView30, "Введите новое имя", Snackbar.LENGTH_SHORT).show();
             return;
         }
-
-        // Получение текущего пользователя Firebase
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()

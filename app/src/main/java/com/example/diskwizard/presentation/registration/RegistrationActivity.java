@@ -6,20 +6,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.diskwizard.R;
 import com.example.diskwizard.domain.model.User;
 import com.example.diskwizard.presentation.login.LoginActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.diskwizard.databinding.ActivityRegistrationBinding;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -28,11 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class RegistrationActivity extends AppCompatActivity {
     ActivityRegistrationBinding binding;
-    FirebaseAuth auth;
-    TextInputEditText emailField;
-    TextInputEditText nameField;
-    TextInputEditText passwordField;
-    TextInputEditText repeatpasswordField;
+    FirebaseAuth auth = FirebaseAuth.getInstance();
     FirebaseDatabase db = FirebaseDatabase.getInstance();
 
     DatabaseReference users;
@@ -41,7 +28,7 @@ public class RegistrationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
-        String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard"); // Значение по умолчанию - ваша текущая тема
+        String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard");
 
         // Устанавливаем тему
         switch (themeName) {
@@ -88,7 +75,6 @@ public class RegistrationActivity extends AppCompatActivity {
                 break;
         }
 
-        auth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
         users = db.getReference("Users");
 
