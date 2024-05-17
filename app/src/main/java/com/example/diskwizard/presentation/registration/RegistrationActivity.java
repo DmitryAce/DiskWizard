@@ -16,6 +16,8 @@ import com.example.diskwizard.databinding.ActivityRegistrationBinding;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class RegistrationActivity extends AppCompatActivity {
     ActivityRegistrationBinding binding;
@@ -115,13 +117,14 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
 
-        auth.createUserWithEmailAndPassword(email.getText().toString(), pass.getText().toString())
+        String hashedPassword = hashPassword(pass.getText().toString());
+
+        auth.createUserWithEmailAndPassword(email.getText().toString(), hashedPassword)
                 .addOnSuccessListener(authResult -> {
 
                     User user = new User();
                     user.setEmail(email.getText().toString());
                     user.setName(name.getText().toString());
-                    user.setPass(pass.getText().toString());
                     user.setAdmin(false);
 
                     users.child(auth.getCurrentUser().getUid())
@@ -149,4 +152,24 @@ public class RegistrationActivity extends AppCompatActivity {
                     Snackbar.make(binding.textView4, "Registration failed: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
                 });
             }
+
+    private String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes());
+            StringBuilder hexString = new StringBuilder();
+
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
+
+}

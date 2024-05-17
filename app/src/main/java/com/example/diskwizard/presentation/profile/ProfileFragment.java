@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.diskwizard.MainActivity;
 import com.example.diskwizard.R;
 import com.example.diskwizard.databinding.FragmentProfileBinding;
 import com.example.diskwizard.presentation.login.LoginActivity;
@@ -61,7 +62,7 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         binding.UserName.setText(name);
-        binding.exit.setOnClickListener(view1 -> exit());
+        binding.exit.setOnClickListener(view1 -> exit(requireContext()));
         binding.changeAVA.setOnClickListener(view1 -> chooseImage());
 
         String userId = user.getUid();
@@ -210,11 +211,17 @@ public class ProfileFragment extends Fragment {
                 .show());
     }
 
-    public void exit(){
-        Intent intent = new Intent(requireActivity(), LoginActivity.class);
+    public void exit(Context context) {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(context, LoginActivity.class);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+        myEdit.putBoolean("isLoggedIn", false);
+        myEdit.apply();
         startActivity(intent);
         requireActivity().finish();
     }
+
 
     // IMAGE
     // Создадим экземпляр ActivityResultLauncher

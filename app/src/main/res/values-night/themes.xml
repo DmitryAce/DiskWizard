@@ -5,6 +5,7 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="rippleColor">@color/default_color</item>
+        <item name="android:fontFamily">@font/gothampro</item>
     </style>
 
     <style name="Base.Theme.DiskWizard.Green" parent="Theme.Material3.DayNight.NoActionBar">
@@ -24,7 +25,7 @@
         <item name="colorOutline">@color/green_primary</item><!-- Поля-границы -->
 
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
-
+        <item name="android:fontFamily">@font/gothampro</item>
 
     </style>
 
@@ -45,6 +46,7 @@
         <item name="colorOutline">@color/deep_purple_primary</item><!-- Поля-границы -->
 
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:fontFamily">@font/gothampro</item>
     </style>
 
     <style name="Base.Theme.DiskWizard.LightBlue" parent="Theme.Material3.DayNight.NoActionBar">
@@ -64,6 +66,7 @@
         <item name="colorOutline">@color/lightblue_primary</item><!-- Поля-границы -->
 
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:fontFamily">@font/gothampro</item>
     </style>
 
     <style name="Base.Theme.DiskWizard.Orange" parent="Theme.Material3.DayNight.NoActionBar">
@@ -83,6 +86,7 @@
         <item name="colorOutline">@color/orange_primary</item><!-- Поля-границы -->
 
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:fontFamily">@font/gothampro</item>
     </style>
 
 </resources>

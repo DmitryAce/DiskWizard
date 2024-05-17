@@ -20,6 +20,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class LoginActivity extends AppCompatActivity {
     ActivityLoginBinding binding;
@@ -33,6 +35,15 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE);
         String themeName = prefs.getString("THEME", "Base.Theme.DiskWizard");
+
+        // При запуске приложения проверяем состояние авторизации
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        if (isLoggedIn) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
         // Устанавливаем тему
         switch (themeName) {
@@ -102,7 +113,9 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        auth.signInWithEmailAndPassword(email, pass)
+        String hashedPassword = hashPassword(pass);
+
+        auth.signInWithEmailAndPassword(email, hashedPassword)
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = auth.getCurrentUser();
                     usersRef.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -125,6 +138,12 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
 
+                    // При успешной авторизации сохраняем состояние авторизации
+                    SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                    myEdit.putBoolean("isLoggedIn", true);
+                    myEdit.apply();
+
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
@@ -133,6 +152,26 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Snackbar.make(binding.textView,
                         "Authorisation Error: " + e.getMessage(),
                         Snackbar.LENGTH_SHORT).show());
+    }
+
+    // Метод для хеширования пароля с использованием SHA-256
+    private String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes());
+            StringBuilder hexString = new StringBuilder();
+
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

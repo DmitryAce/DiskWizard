@@ -13,7 +13,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="12dp"
@@ -137,6 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:text="Все эти компоненты работают вместе, чтобы обеспечить надежное и эффективное хранение данных. Когда компьютеру требуется прочитать или записать данные, он отправляет команду жесткому диску. Головки чтения/записи затем перемещаются к нужной позиции на пластине, где они могут прочитать или записать данные. Кэш используется для ускорения этого процесса, временно храня данные, которые часто используются или ожидают передачи. Прошивка управляет всеми этими процессами, обеспечивая, чтобы диск работал правильно." />
+
         </LinearLayout>
     </ScrollView>
 

@@ -27,7 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Почта"
-            android:inputType="text|textWebEmailAddress" />
+            android:inputType="text|textWebEmailAddress"
+            android:fontFamily="@font/suez_one"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -40,7 +41,8 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:fontFamily="@font/suez_one"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout2"
@@ -61,7 +63,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Пароль"
-            android:inputType="text|textPassword" />
+            android:inputType="text|textPassword"
+            android:fontFamily="@font/suez_one"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 

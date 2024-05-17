@@ -2,7 +2,7 @@ package com.example.diskwizard.domain.model;
 
 
 public class User {
-    private String name, email, pass;
+    private String name, email;
     private boolean admin;
     public User() {
     }
@@ -10,7 +10,6 @@ public class User {
     public User(String name, String email, String pass) {
         this.name = name;
         this.email = email;
-        this.pass = pass;
     }
 
     public String getName() {
@@ -27,14 +26,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPass() {
-        return pass;
-    }
-
-    public void setPass(String pass) {
-        this.pass = pass;
     }
 
     public boolean getAdmin() {
